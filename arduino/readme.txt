@@ -1,6 +1,8 @@
 Colour OLED Breakout Board for Arduino
 =======================
 
+To use this library, copy the SSD1351 folder to the "libraries" folder of the Arduino package.
+
 There are three different libraries that can be used for the Arduino.
 
 1) Direct Drawing
