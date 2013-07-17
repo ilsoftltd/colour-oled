@@ -1,23 +1,61 @@
-#include "utility/SSD1351d.h"
+#include "utility/SSD1351b.h"
 
-SSD1351d::SSD1351d(uint8_t csPin, uint8_t dcPin, uint8_t resetPin)
+SSD1351b::SSD1351b(uint8_t csPin, uint8_t dcPin, uint8_t resetPin)
 {
 	com = new DisplayCom();
 	com->setupPins(csPin, dcPin, resetPin);
 
 	if (com->writeEscSeq(initSeq) == -1) return;
 
+	lineBuf = new Colour[WIDTH];
+
+	if (lineBuf == NULL) return;
+
+	currentLine = 0;
 	isInitialised = true;
 	
-	fillRect(Rectangle(0, 0, 128, 128), Colour::Black);
+	firstLine();
+
+	do
+	{
+		fillRect(Rectangle(0, 0, 128, 128), Colour::Black);
+	} while (nextLine());
 }
 
-SSD1351d::~SSD1351d()
+SSD1351b::~SSD1351b()
 {
 	delete com;
 }
 
-void SSD1351d::setFont(Fontd *font)
+void SSD1351b::firstLine()
+{
+	currentLine = 0;
+	memset(lineBuf, 0, WIDTH * sizeof(Colour));
+
+	// Send the address.
+	com->writeEscSeq(colRowSeq);
+}
+
+bool SSD1351b::nextLine()
+{
+	// Do the draw.
+	com->enableChip(true);
+	
+	com->writeColourBuf(lineBuf, WIDTH);
+	
+	com->enableChip(false);
+
+	// Clear the mem.
+	memset(lineBuf, 0, WIDTH * sizeof(Colour));
+
+	// Increment line.
+	currentLine++;
+
+	// Return true if there is more lines.
+	return currentLine < HEIGHT;
+}
+
+void SSD1351b::setFont(Fontb *font)
 {
 	if (this->font != font)
 	{
@@ -31,24 +69,22 @@ void SSD1351d::setFont(Fontd *font)
 	}
 }
 
-void SSD1351d::clearScreen(Colour colour)
+void SSD1351b::clearScreen(Colour colour)
 {
 	fillRect(Rectangle(0, 0, WIDTH, HEIGHT), colour);
 }
 
-void SSD1351d::drawPixel(Point pixel, Colour colour)
+void SSD1351b::drawPixel(Point pixel, Colour colour)
 {
 	if (!isInitialised) return;
 	if (pixel.x < 0 || pixel.x > WIDTH) return;
 	if (pixel.y < 0 || pixel.y > HEIGHT) return;
+	if (!intersects(pixel.y, 1)) return;
 
-	com->enableChip(true);
-	colRowSeq(Rectangle(pixel, 1, 1));
-	com->writeColour(colour);
-	com->enableChip(false);
+	lineBuf[pixel.x] = colour;
 }
 
-void SSD1351d::drawLine(Point start, Point end, Colour colour)
+void SSD1351b::drawLine(Point start, Point end, Colour colour)
 {
 	bool steep = abs(end.y - start.y) > abs(end.x - start.x);
 
@@ -78,11 +114,11 @@ void SSD1351d::drawLine(Point start, Point end, Colour colour)
 	{
 		if (steep)
 		{
-			drawPixelNoCS(Point(y, x), colour);
+			drawPixel(Point(y, x), colour);
 		}
 		else
 		{
-			drawPixelNoCS(Point(x, y), colour);
+			drawPixel(Point(x, y), colour);
 		}
 
 		err -= deltaY;
@@ -97,7 +133,7 @@ void SSD1351d::drawLine(Point start, Point end, Colour colour)
 	com->enableChip(false);
 }
 
-void SSD1351d::drawRect(Rectangle rect, Colour colour)
+void SSD1351b::drawRect(Rectangle rect, Colour colour)
 {
 	if (!isInitialised) return;
 
@@ -111,41 +147,23 @@ void SSD1351d::drawRect(Rectangle rect, Colour colour)
 	com->enableChip(false);
 }
 
-void SSD1351d::fillRect(Rectangle rect, Colour colour)
+void SSD1351b::fillRect(Rectangle rect, Colour colour)
 {
 	if (!isInitialised) return;
+	if (!intersects(rect.position.y, rect.height)) return;
 
-	int i = 0;
 	int width = rect.width;
-	int height = rect.height;
 
 	if (rect.position.x + width > WIDTH) width = WIDTH - rect.position.x;
-	if (rect.position.y + height > HEIGHT) height = HEIGHT - rect.position.y;
-
-	size_t size = width * 3;
-	uint8_t *col = new uint8_t[size * 3];
-
-	com->enableChip(true);
-	colRowSeq(rect);
 
 	// We store a line buffer here just to speed up the drawing.
 	for (int16_t cX = 0; cX < width; cX++)
 	{
-		col[i++] = colour.r;
-		col[i++] = colour.g;
-		col[i++] = colour.b;
+		lineBuf[rect.left() + cX] = colour;
 	}
-
-	for (int16_t cY = 0; cY < height; cY++)
-	{
-		com->writeDataArray(col, size);
-	}
-
-	delete col;
-	com->enableChip(false);
 }
 
-void SSD1351d::drawCircle(Circle circle, Colour colour)
+void SSD1351b::drawCircle(Circle circle, Colour colour)
 {
 	int16_t x, y;
 	int16_t centreX = circle.position.x;
@@ -178,7 +196,7 @@ void SSD1351d::drawCircle(Circle circle, Colour colour)
 	}
 }
 
-void SSD1351d::fillCircle(Circle circle, Colour colour)
+void SSD1351b::fillCircle(Circle circle, Colour colour)
 {
 	if (!isInitialised) return;
 
@@ -190,8 +208,7 @@ void SSD1351d::fillCircle(Circle circle, Colour colour)
 	calc = x;
 
 	com->enableChip(true);
-	colRowSeq(Rectangle(circle.position, circle.radius, circle.radius));
-
+	
 	while (x >= y)
 	{
 		if (x <= circle.position.x)
@@ -235,7 +252,7 @@ void SSD1351d::fillCircle(Circle circle, Colour colour)
 	com->enableChip(false);
 }
 
-void SSD1351d::drawPolygon(Point *points, int length, Colour colour)
+void SSD1351b::drawPolygon(Point *points, int length, Colour colour)
 {
 	if (!isInitialised) return;
 
@@ -248,7 +265,7 @@ void SSD1351d::drawPolygon(Point *points, int length, Colour colour)
 	drawLine(points[length - 1], points[0], colour);
 }
 
-void SSD1351d::drawString(Point position, char* str, Colour colour)
+void SSD1351b::drawString(Point position, char* str, Colour colour)
 {
 	if (font == NULL || !isInitialised) return;
 
@@ -262,29 +279,15 @@ void SSD1351d::drawString(Point position, char* str, Colour colour)
 	}
 }
 
-void SSD1351d::drawBitmap(Point position, Bitmap *bitmap)
+void SSD1351b::drawBitmap(Point position, Bitmap *bitmap)
 {
 	if (bitmap == NULL) return;
+	if (!intersects(position.y, bitmap->getHeight())) return;
 
-	Colour *lineBuf = new Colour[bitmap->getWidth()];
-
-	com->enableChip(true);
-	colRowSeq(Rectangle(position, bitmap->getWidth(), bitmap->getHeight()));
-	com->enableChip(false);
-
-	for (int i = position.y; i < bitmap->getHeight(); i++)
-	{
-		bitmap->memsetColour(lineBuf, bitmap->getWidth(), i);
-
-		com->enableChip(true);
-		com->writeColourBuf(lineBuf, bitmap->getWidth());
-		com->enableChip(false);
-	}
-
-	delete lineBuf;
+	bitmap->memsetColour(lineBuf, WIDTH, currentLine);
 }
 
-void SSD1351d::setOrientation(Orientation orientation)
+void SSD1351b::setOrientation(Orientation orientation)
 {
 	if (!isInitialised) return;
 
@@ -295,19 +298,32 @@ void SSD1351d::setOrientation(Orientation orientation)
 
 	com->setData(true);
 	
-	if (orientation == CW0)
+	switch (orientation)
 	{
+	case CW0:
 		com->writeData(0xb4);
-	}
-	else
-	{
+		break;
+
+	case CW90:
+		com->writeData(0xb7);
+		break;
+
+	case CW180:
 		com->writeData(0xa6);
+		break;
+
+	case CW270:
+		com->writeData(0xa5);
+		break;
+
+	default:
+		break;
 	}
 
 	com->enableChip(false);
 }
 
-void SSD1351d::setInvert(bool inverted)
+void SSD1351b::setInvert(bool inverted)
 {
 	if (!isInitialised) return;
 
@@ -330,7 +346,7 @@ void SSD1351d::setInvert(bool inverted)
 	com->enableChip(false);
 }
 
-void SSD1351d::screenOn()
+void SSD1351b::screenOn()
 {
 	if (!isInitialised) return;
 
@@ -344,7 +360,7 @@ void SSD1351d::screenOn()
 	com->enableChip(false);
 }
 
-void SSD1351d::screenOff()
+void SSD1351b::screenOff()
 {
 	if (!isInitialised) return;
 
@@ -358,7 +374,7 @@ void SSD1351d::screenOff()
 	com->enableChip(false);
 }
 
-void SSD1351d::setContrast(uint8_t contrast)
+void SSD1351b::setContrast(uint8_t contrast)
 {
 	if (!isInitialised) return;
 
@@ -378,26 +394,7 @@ void SSD1351d::setContrast(uint8_t contrast)
 	com->enableChip(false);
 }
 
-inline void SSD1351d::drawPixelNoCS(Point pixel, Colour colour)
-{
-	if (!isInitialised) return;
-	if (pixel.x < 0 || pixel.x > WIDTH - 1) return;
-	if (pixel.y < 0 || pixel.y > HEIGHT - 1) return;
-
-	colRowSeq(Rectangle(pixel, 1, 1));
-	com->writeColour(colour);
-}
-
-inline void SSD1351d::drawPixelNoSeq(Point pixel, Colour colour)
-{
-	if (!isInitialised) return;
-	if (pixel.x < 0 || pixel.x > WIDTH - 1) return;
-	if (pixel.y < 0 || pixel.y > HEIGHT - 1) return;
-
-	com->writeColour(colour);
-}
-
-inline void SSD1351d::swap(int16_t *x, int16_t *y)
+inline void SSD1351b::swap(int16_t *x, int16_t *y)
 {
 	uint16_t t = *x;
 
@@ -405,21 +402,7 @@ inline void SSD1351d::swap(int16_t *x, int16_t *y)
 	*y = t;
 }
 
-void SSD1351d::colRowSeq(Rectangle rect)
+inline bool SSD1351b::intersects(int16_t y, int16_t h)
 {
-	com->setData(false);
-	com->writeData(0x15);
-	com->setData(true);
-	com->writeData(rect.left());
-	com->writeData(rect.right());
-
-	com->setData(false);
-	com->writeData(0x75);
-	com->setData(true);
-	com->writeData(rect.top());
-	com->writeData(rect.bottom());
-
-	com->setData(false);
-	com->writeData(0x5c);
-	com->setData(true);
+	return ((currentLine >= y) && ( currentLine < y + h));
 }

@@ -1,6 +1,6 @@
-#include "utility/Fontd.h"
+#include "utility/Fontb.h"
 
-Fontd::Fontd(prog_uint8_t *fontData)
+Fontb::Fontb(prog_uint8_t *fontData)
 {
 	ascent = 0;
 	descent = 0;
@@ -10,23 +10,23 @@ Fontd::Fontd(prog_uint8_t *fontData)
 	this->fontData = fontData;
 }
 
-Fontd::~Fontd(void)
+Fontb::~Fontb(void)
 {
 }
 
 #pragma region Private Methods
 
-uint8_t Fontd::getFontByte(uint8_t offset)
+uint8_t Fontb::getFontByte(uint8_t offset)
 {
 	return pgm_read_byte(fontData + offset);
 }
 
-uint16_t Fontd::getFontWord(uint8_t offset)
+uint16_t Fontb::getFontWord(uint8_t offset)
 {
 	return ((uint16_t)pgm_read_byte(fontData + offset) << 8) + (uint16_t)pgm_read_byte(fontData + offset + 1);
 }
 
-glyph_t Fontd::getGlyph(char c, GlyphData *glyphData)
+glyph_t Fontb::getGlyph(char c, GlyphData *glyphData)
 {
 	prog_uint8_t *p = fontData;
 	uint8_t fontFormat = getFontFormat();
@@ -105,82 +105,82 @@ glyph_t Fontd::getGlyph(char c, GlyphData *glyphData)
 	return NULL;
 }
 
-uint8_t Fontd::getFontFormat(void)
+uint8_t Fontb::getFontFormat(void)
 {
 	return getFontByte(0);
 }
 
-uint8_t Fontd::getBBXWidth(void)
+uint8_t Fontb::getBBXWidth(void)
 {
 	return getFontByte(1);
 }
 
-uint8_t Fontd::getBBXHeight(void)
+uint8_t Fontb::getBBXHeight(void)
 {
 	return getFontByte(2);
 }
 
-uint8_t Fontd::getBBXOffX(void)
+uint8_t Fontb::getBBXOffX(void)
 {
 	return getFontByte(3);
 }
 
-uint8_t Fontd::getBBXOffY(void)
+uint8_t Fontb::getBBXOffY(void)
 {
 	return getFontByte(4);
 }
 
-uint8_t Fontd::getCapitalAHeight(void)
+uint8_t Fontb::getCapitalAHeight(void)
 {
 	return getFontByte(5);
 }
 
-uint16_t Fontd::getEncoding65Pos(void)
+uint16_t Fontb::getEncoding65Pos(void)
 {
 	return getFontWord(6);
 }
 
-uint16_t Fontd::getEncoding97Pos(void)
+uint16_t Fontb::getEncoding97Pos(void)
 {
 	return getFontWord(8);
 }
 
-uint8_t Fontd::getFontStartEncoding(void)
+uint8_t Fontb::getFontStartEncoding(void)
 {
 	return getFontByte(10);
 }
 
-uint8_t Fontd::getFontEndEncoding(void)
+uint8_t Fontb::getFontEndEncoding(void)
 {
 	return getFontByte(11);
 }
 
-uint8_t Fontd::getLowerGDesent(void)
+uint8_t Fontb::getLowerGDesent(void)
 {
 	return getFontByte(12);
 }
 
-uint8_t Fontd::getAscent(void)
+uint8_t Fontb::getAscent(void)
 {
 	return getFontByte(13);
 }
 
-uint8_t Fontd::getDescent(void)
+uint8_t Fontb::getDescent(void)
 {
 	return getFontByte(14);
 }
 
-uint8_t Fontd::getXAscent(void)
+uint8_t Fontb::getXAscent(void)
 {
 	return getFontByte(15);
 }
 
-uint8_t Fontd::getXDescent(void)
+uint8_t Fontb::getXDescent(void)
 {
 	return getFontByte(16);
 }
 
-uint8_t Fontd::getGlyphStructureSize()
+uint8_t Fontb::getGlyphStructureSize()
 {
 	switch (getFontFormat())
 	{
@@ -194,7 +194,7 @@ uint8_t Fontd::getGlyphStructureSize()
 	}
 }
 
-GlyphData Fontd::getGlyphData(glyph_t g)
+GlyphData Fontb::getGlyphData(glyph_t g)
 {
 	uint8_t tmp;
 	GlyphData data;
@@ -232,7 +232,7 @@ GlyphData Fontd::getGlyphData(glyph_t g)
 	return data;
 }
 
-GlyphData Fontd::getEmptyGlyphData()
+GlyphData Fontb::getEmptyGlyphData()
 {
 	GlyphData data;
 
@@ -241,12 +241,12 @@ GlyphData Fontd::getEmptyGlyphData()
 	return data;
 }
 
-prog_uint8_t *Fontd::getGlyphDataStart(glyph_t g)
+prog_uint8_t *Fontb::getGlyphDataStart(glyph_t g)
 {
 	return g + getGlyphStructureSize();
 }
 
-void Fontd::draw8Pixel(SSD1351d *oled, PixelData *pixelData)
+void Fontb::draw8Pixel(SSD1351b *oled, PixelData *pixelData)
 {
 	register prog_uint8_t data = pixelData->data;
 	uint8_t dx = 0;
@@ -271,22 +271,22 @@ void Fontd::draw8Pixel(SSD1351d *oled, PixelData *pixelData)
 	} while (data != 0);
 }
 
-uint8_t Fontd::fontVrefCalcFont()
+uint8_t Fontb::fontVrefCalcFont()
 {
 	return 0;
 }
 
-uint8_t Fontd::fontVrefCalcTop()
+uint8_t Fontb::fontVrefCalcTop()
 {
 	return (uint8_t)ascent + 1;
 }
 
-uint8_t Fontd::fontVrefCalcBottom()
+uint8_t Fontb::fontVrefCalcBottom()
 {
 	return (uint8_t)descent;
 }
 
-uint8_t Fontd::getFontPos()
+uint8_t Fontb::getFontPos()
 {
 	switch (fontVref)
 	{
@@ -303,7 +303,7 @@ uint8_t Fontd::getFontPos()
 
 #pragma endregion
 
-void Fontd::updateRefHeights(void)
+void Fontb::updateRefHeights(void)
 {
 	uint16_t ls;
 
@@ -337,7 +337,7 @@ void Fontd::updateRefHeights(void)
 	lineSpacing = ls;
 }
 
-int8_t Fontd::drawGlyph(SSD1351d *oled, Point position, char c, Colour colour)
+int8_t Fontb::drawGlyph(SSD1351b *oled, Point position, char c, Colour colour)
 {
 	uint8_t *data;
 	int16_t w, h;
@@ -387,7 +387,7 @@ int8_t Fontd::drawGlyph(SSD1351d *oled, Point position, char c, Colour colour)
 	return gData.dx;
 }
 
-void Fontd::setFontPosBaseline()
+void Fontb::setFontPosBaseline()
 {
 	fontVref = FontPositionBaseline;
 }

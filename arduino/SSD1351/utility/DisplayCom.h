@@ -9,19 +9,7 @@
 #include "WProgram.h"
 #endif
 
-#if defined(__AVR__)
-#include <avr/pgmspace.h>
-#endif 
-
-#ifdef __18CXX
-typedef unsigned char uint8_t;
-typedef signed char int8_t;
-typedef unsigned short uint16_t;
-typedef signed short int16_t;
-#else
-#include <stdint.h>
-#endif
-
+#include "utility/defs.h"
 #include "utility/Drawing.h"
 
 #define DC_COMMAND	0
@@ -54,6 +42,7 @@ public:
 	uint8_t writeData(const uint8_t data);
 	uint8_t writeDataArray(const uint8_t *data, size_t size);
 	uint8_t writeColour(const Colour colour);
+	uint8_t writeColourBuf(const Colour *colour, size_t size);
 	void enableChip(bool enable);
 	void setData(bool isData);
 	void reset(uint8_t delayValue);

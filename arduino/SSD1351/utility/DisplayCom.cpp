@@ -113,6 +113,16 @@ uint8_t DisplayCom::writeColour(const Colour colour)
 	return 0;
 }
 
+uint8_t DisplayCom::writeColourBuf(const Colour *colour, size_t size)
+{
+	for (int i = 0; i < size; i++)
+	{
+		writeColour(colour[i]);
+	}
+
+	return 0;
+}
+
 void DisplayCom::enableChip(bool enable)
 {
 	digitalWrite(pins[CS_PIN], !enable);

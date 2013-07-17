@@ -1,7 +1,7 @@
 // Font.h
 
-#ifndef _FONTd_h
-#define _FONTd_h
+#ifndef _FONTb_h
+#define _FONTb_h
 
 #if defined(ARDUINO) && ARDUINO >= 100
 	#include "Arduino.h"
@@ -11,11 +11,11 @@
 
 #include "utility/defs.h"
 #include "utility/Drawing.h"
-#include "utility/SSD1351d.h"
+#include "utility/SSD1351b.h"
 
 #define FONT_DATA_STRUCT_SIZE 17
 
-class SSD1351d;
+class SSD1351b;
 
 enum FontHeightMode
 {
@@ -50,7 +50,7 @@ enum FontPosition
 	FontPositionBaseline
 };
 
-class Fontd
+class Fontb
 {
 private:
 	FontHeightMode fontHeightMode;
@@ -83,18 +83,18 @@ private:
 	GlyphData getGlyphData(glyph_t g);
 	GlyphData getEmptyGlyphData();
 	uint8_t *getGlyphDataStart(glyph_t g);
-	void draw8Pixel(SSD1351d *oled, PixelData *pixelData);
+	void draw8Pixel(SSD1351b *oled, PixelData *pixelData);
 	uint8_t fontVrefCalcFont();
 	uint8_t fontVrefCalcTop();
 	uint8_t fontVrefCalcBottom();
 	uint8_t getFontPos();
 
 public:
-	Fontd(prog_uint8_t *fontData);
-	~Fontd(void);
+	Fontb(prog_uint8_t *fontData);
+	~Fontb(void);
 
 	void updateRefHeights(void);
-	int8_t drawGlyph(SSD1351d *oled, Point position, char c, Colour colour);
+	int8_t drawGlyph(SSD1351b *oled, Point position, char c, Colour colour);
 	
 	void setFontPosBaseline();
 };

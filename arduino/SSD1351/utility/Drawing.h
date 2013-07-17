@@ -9,6 +9,8 @@
 	#include "WProgram.h"
 #endif
 
+#include "utility/defs.h"
+
 typedef struct Colour
 {
 private:
