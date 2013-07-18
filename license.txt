@@ -1,6 +1,6 @@
 ============ BSD License for Colour OLED Breakout Board Code ============
 
-Universal 8bit Graphics Library (https://code.google.com/p/colour-oled-breakout-board)
+Colour OLED Breakout Board Library (https://github.com/ilsoftltd/colour-oled)
 
 Copyright (c) 2013, ILSoft Ltd
 All rights reserved.
