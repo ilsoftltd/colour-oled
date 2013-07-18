@@ -1,3 +1,38 @@
+/*
+
+  SSD1351d.cpp
+  
+  Colour OLED Breakout Board Library
+  
+  Copyright (c) 2013, ILSoft Ltd
+  All rights reserved.
+
+  Redistribution and use in source and binary forms, with or without modification, 
+  are permitted provided that the following conditions are met:
+
+  * Redistributions of source code must retain the above copyright notice, this list 
+    of conditions and the following disclaimer.
+    
+  * Redistributions in binary form must reproduce the above copyright notice, this 
+    list of conditions and the following disclaimer in the documentation and/or other 
+    materials provided with the distribution.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND 
+  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, 
+  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
+  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR 
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; 
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
+  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.  
+
+*/
+
 #include "utility/SSD1351d.h"
 
 SSD1351d::SSD1351d(uint8_t csPin, uint8_t dcPin, uint8_t resetPin)
@@ -266,18 +301,24 @@ void SSD1351d::drawBitmap(Point position, Bitmap *bitmap)
 {
 	if (bitmap == NULL) return;
 
-	Colour *lineBuf = new Colour[bitmap->getWidth()];
+	int width = bitmap->getWidth();
+	int height = bitmap->getHeight();
+
+	if (position.x + width > WIDTH) width = WIDTH - position.x;
+	if (position.y + height > HEIGHT) height = HEIGHT - position.y;
+
+	Colour *lineBuf = new Colour[width];
 
 	com->enableChip(true);
-	colRowSeq(Rectangle(position, bitmap->getWidth(), bitmap->getHeight()));
+	colRowSeq(Rectangle(position, width, height));
 	com->enableChip(false);
 
-	for (int i = position.y; i < bitmap->getHeight(); i++)
+	for (int i = position.y; i < position.y + height; i++)
 	{
-		bitmap->memsetColour(lineBuf, bitmap->getWidth(), i);
+		bitmap->memsetColour(lineBuf, width, i - position.y);
 
 		com->enableChip(true);
-		com->writeColourBuf(lineBuf, bitmap->getWidth());
+		com->writeColourBuf(lineBuf, width);
 		com->enableChip(false);
 	}
 
