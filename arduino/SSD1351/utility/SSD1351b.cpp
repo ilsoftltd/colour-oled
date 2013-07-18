@@ -109,14 +109,24 @@ void SSD1351b::clearScreen(Colour colour)
 	fillRect(Rectangle(0, 0, WIDTH, HEIGHT), colour);
 }
 
+void SSD1351b::drawPixel(uint16_t x, uint16_t y, Colour colour)
+{
+	this->drawPixel(Point(x, y), colour);
+}
+
 void SSD1351b::drawPixel(Point pixel, Colour colour)
 {
 	if (!isInitialised) return;
-	if (pixel.x < 0 || pixel.x > WIDTH) return;
-	if (pixel.y < 0 || pixel.y > HEIGHT) return;
+	if (pixel.x < 0 || pixel.x >= WIDTH) return;
+	if (pixel.y < 0 || pixel.y >= HEIGHT) return;
 	if (!intersects(pixel.y, 1)) return;
 
 	lineBuf[pixel.x] = colour;
+}
+
+void SSD1351b::drawLine(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, Colour colour)
+{
+	this->drawLine(Point(x1, y1), Point(x2, y2), colour);
 }
 
 void SSD1351b::drawLine(Point start, Point end, Colour colour)
@@ -168,6 +178,11 @@ void SSD1351b::drawLine(Point start, Point end, Colour colour)
 	com->enableChip(false);
 }
 
+void SSD1351b::drawRect(uint16_t x, uint16_t y, uint16_t w, uint16_t h, Colour colour)
+{
+	this->drawRect(Rectangle(x, y, w, h), colour);
+}
+
 void SSD1351b::drawRect(Rectangle rect, Colour colour)
 {
 	if (!isInitialised) return;
@@ -180,6 +195,11 @@ void SSD1351b::drawRect(Rectangle rect, Colour colour)
 	drawLine(Point(rect.right(), rect.top()),	Point(rect.right(), rect.bottom()),	colour);	// Right
 
 	com->enableChip(false);
+}
+
+void SSD1351b::fillRect(uint16_t x, uint16_t y, uint16_t w, uint16_t h, Colour colour)
+{
+	this->fillRect(Rectangle(x, y, w, h), colour);
 }
 
 void SSD1351b::fillRect(Rectangle rect, Colour colour)
@@ -196,6 +216,11 @@ void SSD1351b::fillRect(Rectangle rect, Colour colour)
 	{
 		lineBuf[rect.left() + cX] = colour;
 	}
+}
+
+void SSD1351b::drawCircle(uint16_t x, uint16_t y, uint16_t radius, Colour colour)
+{
+	this->drawCircle(Circle(x, y, radius), colour);
 }
 
 void SSD1351b::drawCircle(Circle circle, Colour colour)
@@ -229,6 +254,11 @@ void SSD1351b::drawCircle(Circle circle, Colour colour)
 			calc += 2 * x + 1;
 		}
 	}
+}
+
+void SSD1351b::fillCircle(uint16_t x, uint16_t y, uint16_t radius, Colour colour)
+{
+	this->fillCircle(Circle(x, y, radius), colour);
 }
 
 void SSD1351b::fillCircle(Circle circle, Colour colour)
@@ -300,6 +330,11 @@ void SSD1351b::drawPolygon(Point *points, int length, Colour colour)
 	drawLine(points[length - 1], points[0], colour);
 }
 
+void SSD1351b::drawString(uint16_t x, uint16_t y, char* str, Colour colour)
+{
+	this->drawString(Point(x, y), str, colour);
+}
+
 void SSD1351b::drawString(Point position, char* str, Colour colour)
 {
 	if (font == NULL || !isInitialised) return;
@@ -312,6 +347,11 @@ void SSD1351b::drawString(Point position, char* str, Colour colour)
 		position.x += d;
 		str++;
 	}
+}
+
+void SSD1351b::drawBitmap(uint16_t x, uint16_t y, Bitmap *bitmap)
+{
+	this->drawBitmap(Point(x, y), bitmap);
 }
 
 void SSD1351b::drawBitmap(Point position, Bitmap *bitmap)
