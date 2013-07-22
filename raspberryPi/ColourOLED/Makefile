@@ -102,7 +102,7 @@ install:	$(DYNAMIC) install-headers
 	@echo "[Install Dynamic Lib]"
 	@install -m 0755 -d											$(DESTDIR)$(PREFIX)/lib
 	@install -m 0755 libcolourOled.so.$(VERSION)				$(DESTDIR)$(PREFIX)/lib/libcolourOled.so.$(VERSION)
-	@ln -sf $(DESTDIR)$(PREFIX)/lib/libColourOled.so.$(VERSION)	$(DESTDIR)/lib/libcolourOled.so
+	@ln -sf $(DESTDIR)$(PREFIX)/lib/libcolourOled.so.$(VERSION)	$(DESTDIR)/lib/libcolourOled.so
 	
 .PHONEY:	uninstall
 uninstall:
