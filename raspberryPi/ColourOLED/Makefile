@@ -66,7 +66,7 @@ $(STATIC):	$(OBJ)
 	
 $(DYNAMIC):	$(OBJ)
 	@echo "[Link (Dynamic)]"
-	@$(CC) -shared -Wl,-soname,libwiringPi.so -o libwiringPi.so.$(VERSION) -lpthread $(OBJ)
+	@$(CC) -shared -Wl,-soname,libcolourOled.so -o libcolourOled.so.$(VERSION) -lpthread $(OBJ)
 	
 .c.o:
 	@echo [Compile] $<
@@ -75,7 +75,7 @@ $(DYNAMIC):	$(OBJ)
 .PHONEY:	clean
 clean:
 	@echo "[Clean]"
-	@rm -f $(OBJ) *~ cpre tags libcolourOled.*
+	@rm -f $(OBJ) *~ core tags libcolourOled.*
 
 .PHONEY:	tags
 tags:	$(SRC)
