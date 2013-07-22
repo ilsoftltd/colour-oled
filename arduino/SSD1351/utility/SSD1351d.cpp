@@ -170,15 +170,14 @@ void SSD1351d::fillRect(Rectangle rect, Colour colour)
 {
 	if (!isInitialised) return;
 
-	int i = 0;
 	int width = rect.width;
 	int height = rect.height;
 
 	if (rect.position.x + width > WIDTH) width = WIDTH - rect.position.x;
 	if (rect.position.y + height > HEIGHT) height = HEIGHT - rect.position.y;
 
-	size_t size = width * 3;
-	uint8_t *col = new uint8_t[size * 3];
+	size_t size = width;
+	Colour *col = new Colour[size];
 
 	com->enableChip(true);
 	colRowSeq(rect);
@@ -186,14 +185,12 @@ void SSD1351d::fillRect(Rectangle rect, Colour colour)
 	// We store a line buffer here just to speed up the drawing.
 	for (int16_t cX = 0; cX < width; cX++)
 	{
-		col[i++] = colour.r;
-		col[i++] = colour.g;
-		col[i++] = colour.b;
+		col[cX] = colour;
 	}
 
 	for (int16_t cY = 0; cY < height; cY++)
 	{
-		com->writeDataArray(col, size);
+		com->writeColourBuf(col, size);
 	}
 
 	delete col;
