@@ -117,6 +117,8 @@ uninstall:
 	@rm -f $(DESTDIR)$(PREFIX)/include/Drawing.h
 	@rm -f $(DESTDIR)$(PREFIX)/include/Bitmap.h
 	@rm -f $(DESTDIR)$(PREFIX)/include/DisplayCom.h
+	@rm -f $(DESTDIR)$(PREFIX)/lib/libcolourOled.*
+	@ldconfig
 	
 .PHONEY:	depend
 depend:
