@@ -1,0 +1,55 @@
+#######################################
+# Syntax Colouring Map SSD1351
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+SSD1351	KEYWORD1
+Font	KEYWORD1
+Colour	KEYWORD1
+Rectangle	KEYWORD1
+Circle	KEYWORD1
+Rectangle	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+LoadBitmap	KEYWORD2
+getWidth	KEYWORD2
+getHeight	KEYWORD2
+memsetColour	KEYWORD2
+close	KEYWORD2
+firstLine	KEYWORD2
+nextLine	KEYWORD2
+setFont	KEYWORD2
+clearScreen	KEYWORD2
+drawPixel	KEYWORD2
+drawLine	KEYWORD2
+drawRect	KEYWORD2
+fillRect	KEYWORD2
+drawCircle	KEYWORD2
+fillCircle	KEYWORD2
+drawPolygon	KEYWORD2
+drawString	KEYWORD2
+drawBitmap	KEYWORD2
+setOrientation	KEYWORD2
+setInvert	KEYWORD2
+screenOn	KEYWORD2
+screenOff	KEYWORD2
+setContrast	KEYWORD2
+
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+SSD1351_MODE_DIRECT	LITERAL1
+SSD1351_MODE_BUFFER	LITERAL1
+CW0	LITERAL1
+CW90	LITERAL1
+CW180	LITERAL1
+CW270	LITERAL1
+SSD1351_MODE	LITERAL1
+WIDTH	LITERAL1
+HEIGHT	LITERAL1
