@@ -33,15 +33,7 @@
 
 */
 
-// Set this to false to use Direct mode of drawing.
-#define USE_BUFFER true
-
-#if USE_BUFFER
 #include <oledBuffered.h>
-#else
-#include <oledDirect.h>
-#endif
-
 #include <SD.h>
 
 // The Arduino Shield from ILSoft uses pins 8, 9 and 7 for CS, DC and Reset.
@@ -65,30 +57,15 @@ void draw()
 	oled->drawLine(Point(0, 0), Point(64, 32), Colour::Red);
 }
 
-bool flip = false;
-
 void loop()
 {
-	// Clear the screen.
-	oled->clearScreen(Colour::Black);
-
-	// Change orientation to be rotated 180.
-	oled->setOrientation((flip ? CW180 : CW0));
-	flip = !flip;
-
-#if SSD1351_MODE == SSD1351_MODE_BUFFER
 	// Buffer mode requires to reset the line and then loop through all lines and draw.
 	oled->firstLine();
 
 	do
 	{
-#endif
-
 		draw();
-
-#if SSD1351_MODE == SSD1351_MODE_BUFFER
 	} while(oled->nextLine());
-#endif
 
 	delay(1000);
 }
