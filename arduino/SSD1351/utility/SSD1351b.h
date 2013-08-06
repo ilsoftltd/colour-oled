@@ -271,12 +271,12 @@ private:
 	Fontb *font;
 	Colour *lineBuf;
 	int16_t currentLine;
-
+	DisplayCom *com;
+	
 	inline void swap(int16_t *x, int16_t *y);
 	inline bool intersects(int16_t y, int16_t h);
 
 public:
-	DisplayCom *com;
 	SSD1351b(uint8_t csPin, uint8_t dcPin, uint8_t resetPin);
 	~SSD1351b();
 

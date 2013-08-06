@@ -251,14 +251,14 @@ private:
 
 	bool isInitialised;
 	Fontd *font;
-
+	DisplayCom *com;
+	
 	inline void drawPixelNoCS(Point pixel, Colour colour);
 	inline void drawPixelNoSeq(Point pixel, Colour colour);
 	inline void swap(int16_t *x, int16_t *y);
 	void colRowSeq(Rectangle rect);
 
 public:
-	DisplayCom *com;
 	SSD1351d(uint8_t csPin, uint8_t dcPin, uint8_t resetPin);
 	~SSD1351d();
 
