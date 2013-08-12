@@ -1,6 +1,6 @@
 /*
 
-  DrawLineDirect.ino
+  DrawCircleBuffered.ino
   
   Colour OLED Breakout Board Library
   
@@ -32,7 +32,8 @@
   ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.  
 
 */
-#include <oledDirect.h>
+
+#include <oledBuffered.h>
 #include <SD.h>
 
 // The Arduino Shield from ILSoft uses pins 8, 9 and 7 for CS, DC and Reset.
@@ -47,20 +48,25 @@ void setup()
 {
 	// Instantiate the class with the pins. 
 	oled = new SSD1351(CS, DC, RESET);
-
-	// Clear the screen.
-	oled->clearScreen(Colour::Black);
-	draw();
 }
 
 // Draw the screen.
 void draw()
 {
-	// Draw a line between two points with the colour Red.
-	oled->drawLine(Point(0, 0), Point(64, 32), Colour::Red);
+	// Draw / fills a circle with the colour Red.
+	oled->drawCircle(Circle(16, 16, 32), Colour::Red);
+	oled->fillCircle(Circle(64, 64, 32), Colour::Red);
 }
 
 void loop()
 {
-  
+	// Buffer mode requires to reset the line and then loop through all lines and draw.
+	oled->firstLine();
+
+	do
+	{
+		draw();
+	} while(oled->nextLine());
+
+	delay(1000);
 }

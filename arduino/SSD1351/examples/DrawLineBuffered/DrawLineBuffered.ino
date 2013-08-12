@@ -1,6 +1,6 @@
 /*
 
-  DrawLine.ino
+  DrawLineBuffered.ino
   
   Colour OLED Breakout Board Library
   

@@ -1,6 +1,6 @@
 /*
 
-  DrawLineDirect.ino
+  DrawCircleDirect.ino
   
   Colour OLED Breakout Board Library
   
@@ -56,8 +56,9 @@ void setup()
 // Draw the screen.
 void draw()
 {
-	// Draw a line between two points with the colour Red.
-	oled->drawLine(Point(0, 0), Point(64, 32), Colour::Red);
+	// Draw / fills a circle with the colour Red.
+	oled->drawCircle(Circle(16, 16, 32), Colour::Red);
+	oled->fillCircle(Circle(64, 64, 32), Colour::Red);
 }
 
 void loop()
