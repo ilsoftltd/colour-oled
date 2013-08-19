@@ -1,6 +1,6 @@
 /*
 
-  Bitmap.h
+  DrawPolygonDirect.ino
   
   Colour OLED Breakout Board Library
   
@@ -32,64 +32,36 @@
   ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.  
 
 */
-
-#ifndef _BITMAP_h
-#define _BITMAP_h
-
-#if defined(ARDUINO) && ARDUINO >= 100
-#include "Arduino.h"
-#else
-#include "WProgram.h"
-#endif
-
-#include "utility/defs.h"
-#include "utility/Drawing.h"
+#include <oledDirect.h>
 #include <SD.h>
 
-typedef struct BitmapHeader
+// The Arduino Shield from ILSoft uses pins 8, 9 and 7 for CS, DC and Reset.
+#define CS		8
+#define DC		9
+#define RESET	7
+
+// Create a variable to hold our OLED class.
+SSD1351 *oled;
+
+void setup()
 {
-	uint16_t magic;		// Magic number (Normally BM)
-	uint32_t fileSize;
-	uint16_t creator1;
-	uint16_t creator2;
-	uint32_t offset;
-} BITMAP_HEADER;
+	// Instantiate the class with the pins. 
+	oled = new SSD1351(CS, DC, RESET);
 
-typedef struct BitmapDibHeader
+	// Clear the screen.
+	oled->clearScreen(Colour::Black);
+	draw();
+}
+
+// Draw the screen.
+void draw()
 {
-	uint32_t headerSize;
-	uint32_t width;
-	uint32_t height;
-	uint16_t nPlanes;
-	uint16_t depth;
-	uint32_t compressType;
-	uint32_t bmpBytes;
-	uint32_t hRes;
-	uint32_t vRes;
-	uint32_t nColours;
-	uint32_t nImpColours;
-} BITMAP_DIB_HEADER;
+	// Draws a polygon with the colour Red.
+	Point points[4] = { Point(64, 32), Point(32, 64), Point(64, 96), Point(96, 64) };
+	oled->drawPolygon(points, 4, Colour::Red);
+}
 
-class Bitmap
+void loop()
 {
-private:
-	File image;
-	BitmapHeader header;
-	BitmapDibHeader dibHeader;
-
-	void reverseBytes(Colour *start, size_t size);
-
-public:
-	static Bitmap* LoadBitmap(char *file);
-
-	Bitmap(File file);
-	~Bitmap();
-
-	uint32_t getWidth();
-	uint32_t getHeight();
-	void memsetColour(Colour *buf, size_t size, uint16_t line);
-	void close();
-};
-
-#endif
-
+  
+}
