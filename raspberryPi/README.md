@@ -14,6 +14,6 @@ To use the code version, you first need to download the WiringPi library from: h
 
 Once you have WiringPi, you now have to make the Colour OLED library. First navigate to the "raspberryPi/ColourOLED" folder and then type "make" and press enter.
 
-This should now compile and install the library. This library is used in the exact same way as the Arduino so for examples, check the examples for the Arduino.
+This should now compile and install the library. This library is used in the exact same way as the Arduino so please refer to the Arduino examples folder.
 
-When compiling your code, you must use -lcolourOled as a flag on the gcc or g++ complier.
+When compiling your code you must use -lcolourOled and -lwiringPi as a flag on the gcc or g++ complier.
