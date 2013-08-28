@@ -35,9 +35,13 @@
 #include <oledDirect.h>
 #include <SD.h>
 
+#ifndef __AVR__
+#include <SPI.h>
+#endif
+
 // The Arduino Shield from ILSoft uses pins 8, 9 and 7 for CS, DC and Reset.
-#define CS		8
-#define DC		9
+#define CS	8
+#define DC	9
 #define RESET	7
 
 // Create a variable to hold our OLED class.
@@ -57,8 +61,8 @@ void setup()
 void draw()
 {
 	// Draw / fills a rectangle with the colour Red.
-	oled->drawRect(Rect(0, 0, 64, 32), Colour::Red);
-	oled->fillRect(Rect(64, 32, 64, 32), Colour::Red);
+	oled->drawRect(Rectangle(0, 0, 64, 32), Colour::Red);
+	oled->fillRect(Rectangle(64, 32, 64, 32), Colour::Red);
 }
 
 void loop()

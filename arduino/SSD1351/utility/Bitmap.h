@@ -36,12 +36,6 @@
 #ifndef _BITMAP_h
 #define _BITMAP_h
 
-#if defined(ARDUINO) && ARDUINO >= 100
-#include "Arduino.h"
-#else
-#include "WProgram.h"
-#endif
-
 #include "utility/defs.h"
 #include "utility/Drawing.h"
 #include <SD.h>

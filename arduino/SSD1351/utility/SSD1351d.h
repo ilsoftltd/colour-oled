@@ -36,22 +36,15 @@
 #ifndef _SSD1351d_h
 #define _SSD1351d_h
 
-#if defined(ARDUINO) && ARDUINO >= 100
-#include "Arduino.h"
-#else
-#include "WProgram.h"
-#endif
-
-#include "utility/defs.h"
-#include "utility/Bitmap.h"
-#include "utility/Drawing.h"
-#include "utility/DisplayCom.h"
-#include "utility/Fontd.h"
-
 #define WIDTH	128
 #define HEIGHT	128
 
 #define SSD1351_MODE	SSD1351_MODE_DIRECT
+
+#include "utility/defs.h"
+#include "utility/DisplayCom.h"
+#include "utility/Bitmap.h"
+#include "utility/Fontd.h"
 
 #pragma region InitSeq
 

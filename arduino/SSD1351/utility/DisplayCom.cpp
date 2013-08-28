@@ -44,18 +44,29 @@ void DisplayCom::setupPins(uint8_t csPin, uint8_t dcPin, uint8_t resetPin)
 	pinMode(csPin, OUTPUT);
 	pinMode(dcPin, OUTPUT);
 	pinMode(resetPin, OUTPUT);
+
+#ifdef __AVR__
 	pinMode(SS, OUTPUT);
 	pinMode(SCK, OUTPUT);
 	pinMode(MOSI, OUTPUT);
+#endif
 
 	digitalWrite(csPin, HIGH);
 	digitalWrite(dcPin, HIGH);
 	digitalWrite(resetPin, HIGH);
-	digitalWrite(SS, HIGH);
 
+#ifdef __AVR__
+	digitalWrite(SS, HIGH);
+#endif
+
+#ifdef __AVR__
 	SPCR = 0;
 	SPCR = (1 << SPE) | (1 << MSTR) | (0 << SPR1) | (0 << SPR0) | (0 << CPOL) | (0 << CPHA);
 	SPSR |= (1 << SPI2X);
+#else
+	SPI.begin(csPin);
+	SPI.setClockDivider(csPin, 6);
+#endif	
 }
 
 uint8_t DisplayCom::writeEscSeq(const uint8_t *escSeq)
@@ -73,7 +84,11 @@ uint8_t DisplayCom::writeEscSeq(const uint8_t *escSeq)
 		{
 			if (value != 0xff)
 			{
+#ifdef __AVR__
 				writeData(value);
+#else
+				writeData(value, false);
+#endif
 			}
 			else
 			{
@@ -117,8 +132,13 @@ uint8_t DisplayCom::writeEscSeq(const uint8_t *escSeq)
 	}
 }
 
+#ifdef __AVR__
 uint8_t DisplayCom::writeData(const uint8_t data)
+#else
+uint8_t DisplayCom::writeData(const uint8_t data, bool cont)
+#endif
 {
+#ifdef __AVR__
 	// Set the data and send.
 	SPDR = data;
 
@@ -127,23 +147,43 @@ uint8_t DisplayCom::writeData(const uint8_t data)
 
 	// Clear the SPIF flag by reading SPDR.
 	return SPDR;
+#else
+	if (cont)
+		SPI.transfer(pins[CS_PIN], data, SPI_CONTINUE);
+	else
+		SPI.transfer(pins[CS_PIN], data);
+#endif	
 }
 
 uint8_t DisplayCom::writeDataArray(const uint8_t *data, size_t size)
 {
 	for (int i = 0; i < size; i++)
 	{
+#ifdef __AVR__
 		writeData(data[i]);
+#else
+		writeData(data[i], i == size - 1);
+#endif
 	}
 
 	return 0;
 }
 
+#ifdef __AVR__
 uint8_t DisplayCom::writeColour(const Colour colour)
+#else
+uint8_t DisplayCom::writeColour(const Colour colour, bool cont)
+#endif
 {
+#ifdef __AVR__
 	writeData(colour.r >> 2);
 	writeData(colour.g >> 2);
 	writeData(colour.b >> 2);
+#else
+	writeData(colour.r >> 2, true);
+	writeData(colour.g >> 2, true);
+	writeData(colour.b >> 2, cont);
+#endif
 
 	return 0;
 }
@@ -152,7 +192,11 @@ uint8_t DisplayCom::writeColourBuf(const Colour *colour, size_t size)
 {
 	for (int i = 0; i < size; i++)
 	{
+#ifdef __AVR__
 		writeColour(colour[i]);
+#else
+		writeColour(colour[i], i == size - 1);
+#endif
 	}
 
 	return 0;

@@ -35,9 +35,13 @@
 #include <oledDirect.h>
 #include <SD.h>
 
+#ifndef __AVR__
+#include <SPI.h>
+#endif
+
 // The Arduino Shield from ILSoft uses pins 8, 9 and 7 for CS, DC and Reset.
-#define CS		8
-#define DC		9
+#define CS	8
+#define DC	9
 #define RESET	7
 
 // Create a variable to hold our OLED class.

@@ -375,26 +375,47 @@ void SSD1351b::setOrientation(Orientation orientation)
 	com->enableChip(true);
 
 	com->setData(false);
+	
+#ifdef __AVR__
 	com->writeData(0xa0);
+#else
+	com->writeData(0xa0, true);
+#endif
 
 	com->setData(true);
 	
 	switch (orientation)
 	{
 	case CW0:
+#ifdef __AVR__
 		com->writeData(0xb4);
+#else
+		com->writeData(0xb0, false);
+#endif
 		break;
 
 	case CW90:
+#ifdef __AVR__
 		com->writeData(0xb7);
+#else
+		com->writeData(0xb7, false);
+#endif
 		break;
 
 	case CW180:
+#ifdef __AVR__
 		com->writeData(0xa6);
+#else
+		com->writeData(0xa6, false);
+#endif
 		break;
 
 	case CW270:
+#ifdef __AVR__
 		com->writeData(0xa5);
+#else
+		com->writeData(0xa5, false);
+#endif
 		break;
 
 	default:
@@ -414,14 +435,26 @@ void SSD1351b::setInvert(bool inverted)
 
 	if (inverted)
 	{
+#ifdef __AVR__
 		com->writeData(0xa7);
+#else
+		com->writeData(0xa7, true);
+#endif
 	}
 	else
 	{
+#ifdef __AVR__
 		com->writeData(0xa6);
+#else
+		com->writeData(0xa6, true);
+#endif
 	}
 
-	com->writeData(0x5c);
+#ifdef __AVR__
+		com->writeData(0x5c);
+#else
+		com->writeData(0x5c, false);
+#endif
 
 	com->setData(true);
 	com->enableChip(false);
@@ -434,8 +467,14 @@ void SSD1351b::screenOn()
 	com->enableChip(true);
 
 	com->setData(false);
+
+#ifdef __AVR__
 	com->writeData(0xaf);
 	com->writeData(0x5c);
+#else
+	com->writeData(0xaf, true);
+	com->writeData(0x5c, false);
+#endif
 
 	com->setData(true);
 	com->enableChip(false);
@@ -448,9 +487,15 @@ void SSD1351b::screenOff()
 	com->enableChip(true);
 
 	com->setData(false);
+	
+#ifdef __AVR__
 	com->writeData(0xae);
 	com->writeData(0x5c);
-
+#else
+	com->writeData(0xae, true);
+	com->writeData(0x5c, false);
+#endif
+	
 	com->setData(true);
 	com->enableChip(false);
 }
@@ -463,13 +508,28 @@ void SSD1351b::setContrast(uint8_t contrast)
 
 	com->enableChip(true);
 	com->setData(false);
+	
+#ifdef __AVR__
 	com->writeData(0xc7);
+#else
+	com->writeData(0xc7, true);
+#endif
 
 	com->setData(true);
+	
+#ifdef __AVR__
 	com->writeData(contrast);
+#else
+	com->writeData(contrast, true);
+#endif
 
 	com->setData(false);
+
+#ifdef __AVR__
 	com->writeData(0x5c);
+#else
+	com->writeData(0x5c, false);
+#endif
 
 	com->setData(true);
 	com->enableChip(false);

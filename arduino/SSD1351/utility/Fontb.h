@@ -36,17 +36,11 @@
 #ifndef _FONTb_h
 #define _FONTb_h
 
-#if defined(ARDUINO) && ARDUINO >= 100
-	#include "Arduino.h"
-#else
-	#include "WProgram.h"
-#endif
+#define FONT_DATA_STRUCT_SIZE 17
 
 #include "utility/defs.h"
 #include "utility/Drawing.h"
 #include "utility/SSD1351b.h"
-
-#define FONT_DATA_STRUCT_SIZE 17
 
 class SSD1351b;
 

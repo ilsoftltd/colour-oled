@@ -84,7 +84,13 @@ void SSD1351d::drawPixel(Point pixel, Colour colour)
 
 	com->enableChip(true);
 	colRowSeq(Rectangle(pixel, 1, 1));
+	
+#ifdef __AVR__
 	com->writeColour(colour);
+#else
+	com->writeColour(colour, false);
+#endif
+
 	com->enableChip(false);
 }
 
@@ -369,17 +375,35 @@ void SSD1351d::setOrientation(Orientation orientation)
 	com->enableChip(true);
 
 	com->setData(false);
+	
+#ifdef __AVR__
 	com->writeData(0xa0);
+#else
+	com->writeData(0xa0, true);
+#endif
 
 	com->setData(true);
 	
-	if (orientation == CW0)
+	switch (orientation)
 	{
+	case CW0:
+#ifdef __AVR__
 		com->writeData(0xb4);
-	}
-	else
-	{
+#else
+		com->writeData(0xb0, false);
+#endif
+		break;
+
+	case CW180:
+#ifdef __AVR__
 		com->writeData(0xa6);
+#else
+		com->writeData(0xa6, false);
+#endif
+		break;
+
+	default:
+		break;
 	}
 
 	com->enableChip(false);
@@ -395,14 +419,26 @@ void SSD1351d::setInvert(bool inverted)
 
 	if (inverted)
 	{
+#ifdef __AVR__
 		com->writeData(0xa7);
+#else
+		com->writeData(0xa7, true);
+#endif
 	}
 	else
 	{
+#ifdef __AVR__
 		com->writeData(0xa6);
+#else
+		com->writeData(0xa6, true);
+#endif
 	}
 
-	com->writeData(0x5c);
+#ifdef __AVR__
+		com->writeData(0x5c);
+#else
+		com->writeData(0x5c, false);
+#endif
 
 	com->setData(true);
 	com->enableChip(false);
@@ -415,8 +451,14 @@ void SSD1351d::screenOn()
 	com->enableChip(true);
 
 	com->setData(false);
+
+#ifdef __AVR__
 	com->writeData(0xaf);
 	com->writeData(0x5c);
+#else
+	com->writeData(0xaf, true);
+	com->writeData(0x5c, false);
+#endif
 
 	com->setData(true);
 	com->enableChip(false);
@@ -429,9 +471,15 @@ void SSD1351d::screenOff()
 	com->enableChip(true);
 
 	com->setData(false);
+	
+#ifdef __AVR__
 	com->writeData(0xae);
 	com->writeData(0x5c);
-
+#else
+	com->writeData(0xae, true);
+	com->writeData(0x5c, false);
+#endif
+	
 	com->setData(true);
 	com->enableChip(false);
 }
@@ -444,13 +492,28 @@ void SSD1351d::setContrast(uint8_t contrast)
 
 	com->enableChip(true);
 	com->setData(false);
+	
+#ifdef __AVR__
 	com->writeData(0xc7);
+#else
+	com->writeData(0xc7, true);
+#endif
 
 	com->setData(true);
+	
+#ifdef __AVR__
 	com->writeData(contrast);
+#else
+	com->writeData(contrast, true);
+#endif
 
 	com->setData(false);
+
+#ifdef __AVR__
 	com->writeData(0x5c);
+#else
+	com->writeData(0x5c, false);
+#endif
 
 	com->setData(true);
 	com->enableChip(false);
@@ -463,7 +526,12 @@ inline void SSD1351d::drawPixelNoCS(Point pixel, Colour colour)
 	if (pixel.y < 0 || pixel.y >= HEIGHT) return;
 
 	colRowSeq(Rectangle(pixel, 1, 1));
+	
+#ifdef __AVR__
 	com->writeColour(colour);
+#else
+	com->writeColour(colour, false);
+#endif
 }
 
 inline void SSD1351d::drawPixelNoSeq(Point pixel, Colour colour)
@@ -472,7 +540,11 @@ inline void SSD1351d::drawPixelNoSeq(Point pixel, Colour colour)
 	if (pixel.x < 0 || pixel.x >= WIDTH) return;
 	if (pixel.y < 0 || pixel.y >= HEIGHT) return;
 
+#ifdef __AVR__
 	com->writeColour(colour);
+#else
+	com->writeColour(colour, false);
+#endif
 }
 
 inline void SSD1351d::swap(int16_t *x, int16_t *y)
@@ -486,18 +558,48 @@ inline void SSD1351d::swap(int16_t *x, int16_t *y)
 void SSD1351d::colRowSeq(Rectangle rect)
 {
 	com->setData(false);
+	
+#ifdef __AVR__
 	com->writeData(0x15);
+#else
+	com->writeData(0x15, true);
+#endif
+
 	com->setData(true);
+
+#ifdef __AVR__
 	com->writeData(rect.left());
 	com->writeData(rect.right());
+#else
+	com->writeData(rect.left(), true);
+	com->writeData(rect.right(), true);
+#endif
 
 	com->setData(false);
+	
+#ifdef __AVR__
 	com->writeData(0x75);
+#else
+	com->writeData(0x75, true);
+#endif
+	
 	com->setData(true);
+
+#ifdef __AVR__
 	com->writeData(rect.top());
 	com->writeData(rect.bottom());
+#else
+	com->writeData(rect.top(), true);
+	com->writeData(rect.bottom(), true);
+#endif
 
 	com->setData(false);
+
+#ifdef __AVR__
 	com->writeData(0x5c);
+#else
+	com->writeData(0x5c, false);
+#endif
+	
 	com->setData(true);
 }

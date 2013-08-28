@@ -36,15 +36,6 @@
 #ifndef _DISPLAYCOM_h
 #define _DISPLAYCOM_h
 
-#if defined(ARDUINO) && ARDUINO >= 100
-#include "Arduino.h"
-#else
-#include "WProgram.h"
-#endif
-
-#include "utility/defs.h"
-#include "utility/Drawing.h"
-
 #define DC_COMMAND	0
 #define DC_DATA		1
 
@@ -64,6 +55,10 @@
 #define DC_PIN		1
 #define RESET_PIN	2
 
+#include "utility/defs.h"
+#include "utility/Drawing.h"
+#include <SPI.h>
+
 class DisplayCom
 {
 private:
@@ -72,9 +67,19 @@ private:
 public:
 	void setupPins(uint8_t csPin, uint8_t dcPin, uint8_t resetPin);
 	uint8_t writeEscSeq(const uint8_t *escSeq);
+#ifdef __AVR__
 	uint8_t writeData(const uint8_t data);
+#else
+	uint8_t writeData(const uint8_t data, bool cont);
+#endif
 	uint8_t writeDataArray(const uint8_t *data, size_t size);
+
+#ifdef __AVR__
 	uint8_t writeColour(const Colour colour);
+#else
+	uint8_t writeColour(const Colour colour, bool cont);
+#endif
+
 	uint8_t writeColourBuf(const Colour *colour, size_t size);
 	void enableChip(bool enable);
 	void setData(bool isData);

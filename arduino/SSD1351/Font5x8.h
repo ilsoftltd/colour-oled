@@ -1,8 +1,6 @@
 #ifndef _FONT_5x8_h
 #define _FONT_5x8_h
 
-#include <avr/pgmspace.h>
-
 prog_uint8_t font5x8Data[1693] PROGMEM =
 {
 	1,5,8,0,255,6,1,33,2,53,32,255,255,7,255,6,

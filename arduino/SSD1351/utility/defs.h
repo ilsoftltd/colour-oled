@@ -36,9 +36,11 @@
 #ifndef _SSD1351_DEFS_h
 #define _SSD1351_DEFS_h
 
-#if defined(__AVR__)
-#include <avr/pgmspace.h>
-#endif 
+#if defined(ARDUINO) && ARDUINO >= 100
+#include "Arduino.h"
+#else
+#include "WProgram.h"
+#endif
 
 #ifdef __18CXX
 typedef unsigned char uint8_t;
@@ -49,8 +51,15 @@ typedef signed short int16_t;
 #include <stdint.h>
 #endif
 
+#if defined(__AVR__)
+#include <avr/pgmspace.h>
+#else
+#define PROGMEM
+#define prog_uint8_t uint8_t
+#define pgm_read_byte(b) (*(b))
+#endif 
+
 #define SSD1351_MODE_DIRECT	0
 #define SSD1351_MODE_BUFFER	1
 
 #endif
-

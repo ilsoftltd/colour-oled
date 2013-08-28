@@ -36,22 +36,15 @@
 #ifndef _SSD1351b_h
 #define _SSD1351b_h
 
-#if defined(ARDUINO) && ARDUINO >= 100
-#include "Arduino.h"
-#else
-#include "WProgram.h"
-#endif
-
-#include "utility/defs.h"
-#include "utility/Drawing.h"
-#include "utility/DisplayCom.h"
-#include "utility/Fontb.h"
-#include "utility/Bitmap.h"
-
 #define WIDTH	128
 #define HEIGHT	128
 
 #define SSD1351_MODE	SSD1351_MODE_BUFFER
+
+#include "utility/defs.h"
+#include "utility/DisplayCom.h"
+#include "utility/Bitmap.h"
+#include "utility/Fontb.h"
 
 #pragma region InitSeq
 
@@ -239,7 +232,7 @@ static const prog_uint8_t initSeq[] PROGMEM = {
 
 #pragma region ColRowSeq
 
-static const uint8_t colRowSeq[] PROGMEM = {
+static const prog_uint8_t colRowSeq[] PROGMEM = {
 	ESC_CS(1),
 	ESC_ADR(DC_COMMAND),	0x15,
 	ESC_ADR(DC_DATA),		0x00, 0x7f,

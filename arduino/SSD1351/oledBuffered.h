@@ -33,6 +33,8 @@
 
 */
 
+#include "utility/defs.h"
+#include "utility/Drawing.h"
 #include "utility/SSD1351b.h"
 #include "utility/Fontb.h"
 #include "utility/Bitmap.h"

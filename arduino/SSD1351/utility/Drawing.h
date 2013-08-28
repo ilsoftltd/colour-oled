@@ -36,12 +36,6 @@
 #ifndef _DRAWING_h
 #define _DRAWING_h
 
-#if defined(ARDUINO) && ARDUINO >= 100
-	#include "Arduino.h"
-#else
-	#include "WProgram.h"
-#endif
-
 #include "utility/defs.h"
 
 typedef struct Colour
