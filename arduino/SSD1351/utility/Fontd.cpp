@@ -225,7 +225,6 @@ uint8_t Fontd::getGlyphStructureSize()
 
 	default:
 		return 3;
-		break;
 	}
 }
 

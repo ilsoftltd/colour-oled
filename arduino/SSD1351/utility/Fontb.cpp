@@ -225,7 +225,6 @@ uint8_t Fontb::getGlyphStructureSize()
 
 	default:
 		return 3;
-		break;
 	}
 }
 

@@ -40,6 +40,9 @@
 #include <SPI.h>
 #endif
 
+// Include our sample font.
+#include <Font5x8.h>
+
 // The Arduino Shield from ILSoft uses pins 8, 9 and 7 for CS, DC and Reset.
 #define CS	8
 #define DC	9
@@ -48,10 +51,19 @@
 // Create a variable to hold our OLED class.
 SSD1351 *oled;
 
+// Create a variable to hold the font.
+Font *font5x8;
+
 void setup()
 {
 	// Instantiate the class with the pins. 
 	oled = new SSD1351(CS, DC, RESET);
+	
+	// Create a new font with the font data from the font5x8 header.
+	font5x8 = new Font(font5x8Data);
+	
+	// Let the OLED know the font.
+	oled->setFont(font5x8);
 }
 
 // Draw the screen.
