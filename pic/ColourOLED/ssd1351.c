@@ -233,9 +233,9 @@ void ssd1351_fillRect(uint8_t x, uint8_t y, uint8_t w, uint8_t h, COLOUR colour)
 	ssd1351_setCursor(x, y, x + w - 1, y + h - 1);
 	displayCom_enableChip(true);
 	
-	for (dY = y; dY < h; dY++) 
+	for (dY = 0; dY < h; dY++) 
 	{
-		for (dX = x; dX < w; dX++)
+		for (dX = 0; dX < w; dX++)
 		{
 			displayCom_writeData(colour.r >> 2);
 			displayCom_writeData(colour.g >> 2);
