@@ -57,7 +57,7 @@
 
 #include "utility/defs.h"
 #include "utility/Drawing.h"
-#include <SPI.h>
+#include "pins_arduino.h"
 
 class DisplayCom
 {
